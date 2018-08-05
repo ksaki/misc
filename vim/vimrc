@@ -1,0 +1,25 @@
+" show line number
+set number
+
+" visualize error sound
+set visualbell
+
+" auto end bracket
+set showmatch
+
+" always show status line
+set laststatus=2
+
+" ignore case when searching
+set ignorecase
+
+" enable syntax highlighting
+syntax enable
+
+" indent
+set autoindent
+
+" spell check
+set spelllang=en
+
+ 

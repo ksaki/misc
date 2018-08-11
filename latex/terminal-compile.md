@@ -11,7 +11,7 @@ uplatex hoge.tex
 ## Create PDF file
 
 ```
-dvipdfmx
+dvipdfmx hoge
 ```
 
 

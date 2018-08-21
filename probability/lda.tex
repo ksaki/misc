@@ -1,0 +1,62 @@
+%% Based on Overleaf Sample Paper template
+
+\documentclass[a4paper, uplatex]{jsarticle} %Japanese allowed
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+
+% Math font
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+% graph & pictures
+\usepackage{graphicx}
+
+
+
+\title{Latent Dirithlet Allocation}
+\author{Saki}
+
+
+
+%Document starts here
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\section{Reference}
+Blei, D.M., Ng, A.Y. and Jordan, M.I., 2003. Latent dirichlet allocation. Journal of machine Learning research, 3(Jan), pp.993-1022.
+
+\section{Model}
+Generative Process for each word 
+
+\begin{align*}
+\theta &\sim Dir(\alpha) \\
+z_n &\sim Multinomial(\theta) \\
+w_n &\sim p(w_n|z_n, \beta)
+\end{align*}
+
+Joint Probbailities of $\theta, z_n, w_n$ given $\alpha, \beta$
+$$
+p(\theta, Z, W| \alpha, \beta) = p(\theta | \alpha) \prod_{n=1}^N p(z_n|\theta) p(w_n|z_n, \beta)
+$$
+
+\section{Intuition}
+Imagine a big box, which corresponds to a document. We put small boxes, which corresponds to topics, into the big box.\\ 
+The size of the small boxes are determined by $\theta$ (e.g. Sports box takes 50\% of the big box, Politics box 20\%, and Economics box 30\%). ($p(\theta|\alpha)$) \\
+Once the small box are fit, we chose one small box($p(z_n|\theta)$), and throw a ball (i.e. a word) into the chosen small box.($p(w_n|z_n,\beta)$) \\
+This means that we pick a word which is likely to occur when we write about the chosen topic (e.g. 'baseball' in sport topic), and write down the word on the document. \\
+Repeat this process for the number of words in the document. 
+
+\end{document}
+

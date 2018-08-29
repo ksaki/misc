@@ -52,11 +52,13 @@ p(\theta, Z, W| \alpha, \beta) = p(\theta | \alpha) \prod_{n=1}^N p(z_n|\theta) 
 $$
 
 \section{Story}
-Imagine a big box, which corresponds to a document. We put small boxes, which corresponds to topics, into the big box.\\ 
-The size of the small boxes are determined by $\theta$ (e.g. Sports box takes 50\% of the big box, Politics box 20\%, and Economics box 30\%). ($p(\theta|\alpha)$) \\
-Once the small box are fit, we chose one small box($p(z_n|\theta)$), and throw a ball (i.e. a word) into the chosen small box.($p(w_n|z_n,\beta)$) \\
-This means that we pick a word which is likely to occur when we write about the chosen topic (e.g. 'baseball' in sport topic), and write down the word on the document. \\
-Repeat this process for the number of words in the document. 
+\begin{itemize}
+    \item Imagine a big box, which corresponds to a document. We put small boxes, which corresponds to topics, into the big box.\\ 
+    \item The size of the small boxes are determined by $\theta$ (e.g. Sports box takes 50\% of the big box, Politics box 20\%, and Economics box 30\%). ($p(\theta|\alpha)$) \\
+    \item Once the small box are fit, we chose one small box($p(z_n|\theta)$), and throw a ball (i.e. a word) into the chosen small box.($p(w_n|z_n,\beta)$) \\
+    \item This means that we pick a word which is likely to occur when we write about the chosen topic (e.g. 'baseball' in sport topic), and write down the word on the document. \\
+    \item Repeat this process for the number of words in the document. 
+\end{itemize}
 
 \section{Variational Inference}
 \begin{itemize}
@@ -66,12 +68,12 @@ p(\theta, Z| W, \alpha, \beta) = \frac{p(\theta, Z, W|\alpha, \beta)}{p(W|\alpha
 $$
 
         
-\item However, the denominator is intractable because of $\theta_i and \beta_{ij}$
+\item However, the denominator is intractable because of $\theta_i \text{and} \beta_{ij}$
 \begin{align*}
     p(W|\alpha, \beta) & = \int \frac{\Gamma(\sum_{i=1}^k \alpha_i)}{\prod_{i=1}^k \Gamma(\alpha_i)} \prod_{i=1}^k(\theta^{a_i-1})) (\prod_{n=1}^N \sum_{i=1}^k \prod_{j=1}^V(\theta_i \beta_i)^{w_m^i})d\theta 
 \end{align*}
 
-\item Let's approximate by $q(\theta, \gamma, \phi) = q(\theta|\gamma) \prod_{n=1}^N q(z_n|\phi_n)$. 
+\item Let's approximate this by $q(\theta, \gamma, \phi) = q(\theta|\gamma) \prod_{n=1}^N q(z_n|\phi_n)$. 
 
 \item We want $q$ to be close to $p$, but how to measure the closeness of $p$ and $q$? 
 
@@ -83,6 +85,16 @@ where $z$ is unknown parameter and $x$ is known/observed parameter.
 The smaller the KL divergence is, the "closeer" $p$ and $q$ are. 
 
 \item How to minimize KL divergence? - Maxmimize ELBO
+    \begin{align*}
+    KL(q||p) & = E_q\Big[log \frac{q(z)}{p(z|x)}\Big] \\
+             & = E_q\Big[log q(z)\Big] -  E_q\Big[log p(z|x)\Big] \\
+             & = E_q\Big[log q(z)\Big] -  E_q\Big[log \frac{p(z,x)}{p(x)}\Big] \\
+             & = E_q\Big[log q(z)\Big] -  E_q\Big[log p(z,x)\Big] + E_q\Big[log p(x)\Big] \\
+             & =-(E_q\Big[log q(z)\Big] +  E_q\Big[log p(z,x)\Big]) + E_q\Big[log p(x)\Big]   
+    \end{align*}
+
+\item The first two term are ELBO. So Maximizing ELBO = Minimizing KL divergence. 
+
 
     
 \end{itemize}
@@ -121,4 +133,3 @@ The smaller the KL divergence is, the "closeer" $p$ and $q$ are.
 
 
 \end{document}
-

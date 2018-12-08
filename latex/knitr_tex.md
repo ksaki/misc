@@ -20,3 +20,12 @@ This generates myfile.tex . Compile this as usual by
 pdflatex myfile.tex
 ```
 
+When you want to change the parameters in knitr, insert them between << >>. 
+For instance, to stop the messages of loading package,
+```
+<< message = F >> 
+```
+and to adjust the height and width of the graph, 
+```
+<< fig.witth = 4, fig.height = 4 >> 
+``

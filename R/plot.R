@@ -1,5 +1,8 @@
+# List of functions that I have made and find it useful 
+
 ## plot coefficients and confidence intervals from the output of rstanarm
 
+## Reference (link expired?) https://web.stanford.edu/~imalone/VAM/ggplot
 
 coefplot_stan <- function(mod_stan, var, title){
   ## Plot the coefficients of the regression results from rstanarm
@@ -27,4 +30,4 @@ coefplot_stan <- function(mod_stan, var, title){
 
   return(p)
 
-## 
+ 

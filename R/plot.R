@@ -1,7 +1,6 @@
 # List of functions that I have made and find it useful 
 
 ## plot coefficients and confidence intervals from the output of rstanarm
-
 ## Reference (link expired?) https://web.stanford.edu/~imalone/VAM/ggplot
 
 coefplot_stan <- function(mod_stan, var, title){
@@ -30,4 +29,26 @@ coefplot_stan <- function(mod_stan, var, title){
 
   return(p)
 
- 
+
+
+
+## Plot of polynomial with different degree of freedoms
+data(Boston)
+plot_boston_poly <- function(i, data){
+  ## Plot the fitted line of polynomial with degree i 
+  ## and scatter plot of data
+  ## Using Boston dataset
+  ## Independent variable is nox (--> should be an input)
+  
+  ## input
+  ## @i: degree of polynomial (integer)
+  ## @data: dataset (Boston)
+     fit <- lm(dis ~ poly(nox, degree = i, raw = T), data = data)
+     data$pred_dis <- predict(fit)
+     ggplot(data) +
+         geom_point(aes(x = nox, y = dis)) +
+         geom_line(aes(x = nox, y = pred_dis), color = "red") +
+         ggtitle(paste("Degree =", i, sep = " "))
+}
+plot_ls <- lapply(1:5, plot_boston_poly, data = Boston)
+## each element of the list contains a plot of polynomial with degree = i

@@ -32,7 +32,7 @@ coefplot_stan <- function(mod_stan, var, title){
 
 
 
-## Plot of polynomial with different degree of freedoms
+## Plot of polynomial with different degrees
 data(Boston)
 plot_boston_poly <- function(i, data){
   ## Plot the fitted line of polynomial with degree i 

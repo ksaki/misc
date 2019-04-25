@@ -52,3 +52,27 @@ plot_boston_poly <- function(i, data){
 }
 plot_ls <- lapply(1:5, plot_boston_poly, data = Boston)
 ## each element of the list contains a plot of polynomial with degree = i
+
+
+
+
+
+## Plot in the order of the values of a particular variable
+set.seed(123)
+data <- data.frame(
+  name = sample(letters, 10),
+  value = rnorm(10)
+)
+data <- arrange(data, desc(value))
+
+## this automatically arranges values alphabetically...
+ggplot(data) + 
+  geom_point(aes(x = name, y = value))
+
+## this is the key!
+data$name <- factor(data$name, levels = data$name) 
+ggplot(data) + 
+  geom_point(aes(x = name, y = value))
+
+
+

@@ -6,7 +6,7 @@ header-includes:
    - \usepackage{amsfonts}
    - \usepackage{amsmath}
    - \usepackage{graphicx}
-output: html_document
+output: pdf_document
 ---
 
 \newcommand{\N}{\mathbb{N}}

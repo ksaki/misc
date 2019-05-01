@@ -1,0 +1,111 @@
+---
+title: "Useful theorems in probability theory"
+author: "Saki Kuzushima"
+date: "`r Sys.Date()`"
+header-includes:
+   - \usepackage{amsfonts}
+   - \usepackage{amsmath}
+   - \usepackage{graphicx}
+output: html_document
+---
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+
+
+## Sum of exponential random variables is a gamma random variable
+
+Theorem:
+If $X_i \stackrel{i.i.d}\sim Expo(\lambda)$, $i = 1...n$, then $Y = \sum_{i=1}^n X_i \sim Gamma(n, \lambda)$.
+
+Proof:
+
+First, recall that if $X\sim Expo(\lambda)$, 
+$$
+M_X(t) = \frac{\lambda}{\lambda - t}, \quad (t < \lambda)
+$$
+
+if $Z \sim Gamma(\alpha, \beta)$, 
+$$
+M_Z(t) = (\frac{1}{1 - \beta t})^{-\alpha}
+$$
+Observe that
+$$
+\begin{aligned}
+M_Y(t) &= \E[e^{tY}] \\
+&= \E[e^{t\sum_{i=1}^n X_i}] \\
+&= \E[\prod_{i=1}^n e^{tX_i}] \\
+&= \prod_{i=1}^n \E[e^{tX_i}] \\
+&=  \prod_{i=1}^n \frac{\lambda}{\lambda - t} \\
+&= (\frac{\lambda}{\lambda - t})^n \\
+&=  (\frac{\lambda - t}{\lambda})^{-n} \\
+&= (1 - \frac{t}{\lambda})^{-n}
+\end{aligned}
+$$
+
+This is an mgf of Gamma distribution. So, $Y \sim Gamma(n, \lambda)$. 
+
+
+## Linear combination of Gaussian random variables is also Gaussian
+
+Theorem:
+if $X \sim N(\mu, \sigma^2)$, and $Y = aX + b$, ($a \neq 0$), then $Y \sim N(a\mu + b, a^2\sigma^2)$. 
+
+Proof:
+Recall that if $X \sim N(\mu, \sigma^2)$
+$$
+M_X(t) = e^{\mu t + \frac{\sigma^2}{2}t^2}
+$$
+
+Then, 
+$$
+\begin{aligned}
+M_Y(t) &= \E[e^{t(aX + b)}] \\
+&=\E[e^{taX + tb}] \\
+&=e^{tb} \E[e^{taX}] \\
+&= e^{tb} M_X(ta) \\
+&= e^{tb} e^{\mu t + \frac{\sigma^2}{2}t^2} \\
+&= exp(tb + t\mu a + \frac{\sigma^2}{2}t^2) \\
+&= exp((a\mu + b)t + \frac{a^2\sigma^2}{2}t^2)
+\end{aligned}
+$$
+
+This is also an mgf of Gaussian. $Y \sim N(a\mu + b, a^2 \sigma^2)$.  
+
+
+## Distribution of maximum values
+
+Theorem:
+If $X_1...X_n \stackrel{i.i.d}\sim f_X(x)$, and $Y \equiv max\{X_1...X_n\}$, then $f_Y(y) = n F_X^{n-1}(y) f_X(y)$.
+
+Proof:
+
+$$
+\begin{aligned}
+F_Y(y) &= P(Y \leq y) \\
+&= P(max\{X_1...X_n\} \leq y) \\
+&= P(X_1 \leq y) ...P(X_n \leq y) \\
+&= F_X(y)...F_X(y) \\
+&= F_X^n(y)
+\end{aligned}
+$$
+Then, because $f_Y(y) = \frac{\partial}{\partial y} F_Y(y)$,
+$$
+\begin{aligned}
+  f_Y(y) = n F_X^{n-1}(y)f_X(y)
+\end{aligned}
+$$
+
+
+
+
+
+
+
+
+
+
+
+

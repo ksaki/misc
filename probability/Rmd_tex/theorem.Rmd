@@ -1,12 +1,14 @@
 ---
-title: "Useful theorems in probability theory"
+title: "Useful theorems and the sketch of proof"
 author: "Saki Kuzushima"
 date: "`r Sys.Date()`"
 header-includes:
    - \usepackage{amsfonts}
    - \usepackage{amsmath}
    - \usepackage{graphicx}
-output: pdf_document
+output: 
+  pdf_document:
+    toc: true
 ---
 
 \newcommand{\N}{\mathbb{N}}
@@ -99,12 +101,113 @@ $$
 $$
 
 
+## The Dirichlet distribution belongs to the exponential family
+
+The fact that the Dirichlet distribution belongs to the exponential family is useful. While the expression of the Dirichlet in terms of the exponential family is widely available, the derivation is not. The following sketches the conversion from the usual expression of the pdf of Dirichlet distribution to the form in terms of the exponential family.  
+
+The pdf of the Dirichlet distribution is 
+\begin{align}
+  p(\theta|\alpha) = \frac{1}{B(\alpha)}\prod_{i=1}^K \theta_i^{\alpha_i - 1}
+\end{align}
+where $\theta = [\theta_1....\theta_K]^\intercal$, and $\sum_{i=1}^K \theta_i = 1$, $\theta_i \geq 0, \forall i \in \{1,2,...,K\}$.
+
+The exponential family has the following general pdf
+\begin{align}
+  p(\theta|\eta) = h(\theta) \exp(\eta^\intercal t(\theta) - A(\eta))
+\end{align}
+
+where $t(\theta)$ is the sufficient statistic, $\eta$ is called the natural parameter, $A(\eta)$ is the log normalization factor, and $h(x)$ is the base measure.
+
+It is known that the Dirichlet distribution belongs to the exponential family, and the parameters are
+
+- The natural parameter: $\eta = \alpha = [\alpha_1...\alpha_K]^\intercal$
+- The sufficient statistic: $t(\theta) = \log \theta = \log[\theta_1, ...\theta_K]^\intercal$.
+- The log normalization factor: $A(\eta) = \sum_{i=1}^K \log \Gamma(\eta_i) - \log \Gamma(\sum_{i=1}^K \eta_i)$
+- The base measure: $h(x) = \frac{1}{\prod_{i=1}^K} \theta_i$
+
+The following sketches why the parameters are expressed in these ways. 
+
+First, recall that $B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}$). Then the pdf of the Dirichlet distribution is 
+$$
+\begin{aligned}
+p(\theta|\alpha) &= \frac{1}{B(\alpha)} \prod_{i=1}^K \theta_i^{\alpha_i - 1} \\
+&= \frac{\Gamma(\sum_{i=1}^K \alpha_i)}{\prod_{i=1}^K\Gamma(\alpha_i)}\cdot \frac{\prod_{i=1}^K \theta_i^{\alpha_i}}{\prod_{i=1}^K \theta_i}
+\end{aligned}
+$$
+Taking the exponential and log, 
+$$
+\begin{aligned}
+p(\theta|\alpha) 
+&= \frac{\Gamma(\sum_{i=1}^K \alpha_i)}{\prod_{i=1}^K\Gamma(\alpha_i)}\cdot \frac{\prod_{i=1}^K \theta_i^{\alpha_i}}{\prod_{i=1}^K \theta_i} \\
+&= \frac{1}{\prod_{i=1}^K \theta_i} \exp\Big[\log \frac{\Gamma(\sum_{i=1}^K \alpha_i)}{\prod_{i=1}^K\Gamma(\alpha_i)}\prod_{i=1}^K \theta_i^{\alpha_i}\Big] \\
+&= \frac{1}{\prod_{i=1}^K \theta_i} \exp\Big[\log \Gamma(\sum_{i=1}^K \alpha_i) - \log\prod_{i=1}^K\Gamma(\alpha_i) + \log\prod_{i=1}^K \theta_i^{\alpha_i}\Big] \\
+&=  \frac{1}{\prod_{i=1}^K \theta_i} \exp\Big[\log \Gamma(\sum_{i=1}^K \alpha_i) - \sum_{i=1}^K \log \Gamma(\alpha_i) + \sum_{i=1}^K \alpha_i \log \theta_i\Big] \\
+&= \frac{1}{\prod_{i=1}^K \theta_i} \exp\Big[\alpha^\intercal \log \theta 
+- \big\{\sum_{i=1}^K\log \Gamma(\alpha_i) -
+\log \Gamma(\sum_{i=1}^K \alpha_i) \big\} \Big] \\
+\end{aligned}
+$$
+
+Comparison of this expression with the general pdf of the exponential family yields the parameters listed above. 
 
 
 
 
 
 
+
+
+
+
+## The expectation of the sufficient statistic of the exponential family is the derivative of the log normalizing factor 
+
+Note that this is useful in the derivation of the original variational inference for LDA (in Blei et al 2003). 
+
+Theorem:
+
+\begin{align}
+  \E_\theta[t(\theta)] = \frac{\partial}{\partial \eta} A(\eta) 
+\end{align}
+
+Proof:
+
+Using the fact that the pdf must integrate to one, we first express $a(\eta)$ by the other parameters. 
+
+$$
+\begin{aligned}
+  &1 = \int_\theta p(\theta|\eta) d\theta = \int_\theta h(\theta) \exp(\eta\ t(\theta) - A(\eta)) d\theta \\
+  &\iff 1 = \frac{1}{\exp A(\eta)} \int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta \\
+  &\iff \exp A(\eta) = \int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta \\
+  &\iff A(\eta) = \log \int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta \\
+\end{aligned}
+$$
+Let $g(\eta) = \frac{1}{\exp A(\eta)}$. Then this is also equivalent to 
+\begin{align}
+1 = g(\eta) \int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta 
+\end{align}
+
+Taking the derivative of Eq (3) with respect to $\eta$, 
+$$
+\begin{aligned}
+0 &= \frac{\partial}{\partial \eta}\Big[ g(\eta)\int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta \Big]\\
+&=   g'(\eta)\int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta +
+g(\eta) \frac{\partial}{\partial \eta}\int_\theta h(\theta) \exp(\eta\ t(\theta)) d\theta \\
+&= \frac{g'(\eta)}{g(\eta)} + g(\eta) \int_\theta h(\theta) \exp(\eta\ t(\theta)) t(\theta) d\theta \\
+&= \frac{g'(\eta)}{g(\eta)} + \int_\theta g(\eta) h(\theta) \exp(\eta\ t(\theta)) t(\theta) d\theta \\
+&= \frac{g'(\eta)}{g(\eta)} + \E_\theta[t(\theta)]  \\
+\end{aligned}
+$$
+
+i.e. 
+\begin{align}
+  \E_\theta[t(\theta)] = -\frac{g'(\eta)}{g(\eta)} = -\frac{\partial}{\partial \eta}log(g(\eta))
+\end{align}
+because $\frac{\partial}{\partial \eta}log(g(\eta)) = \frac{1}{g(\eta)}\cdot\frac{\partial}{\partial \eta}g(\eta)$.
+
+Because $g(\eta) = \frac{1}{\exp(A\eta))} = -\exp(A(\eta))$, Eq (4) is equivalent to
+\begin{align}
+  \E[t(\theta)] = -\frac{\partial}{\partial \eta}log(g(\eta)) =\frac{\partial}{\partial \eta} A(\eta)
+\end{align}
 
 
 

@@ -1,0 +1,140 @@
+---
+title: "LDA"
+author: "Saki Kuzushima"
+date: "`r Sys.Date()`"
+header-includes:
+   - \usepackage{amsfonts}
+   - \usepackage{amsmath}
+   - \usepackage{graphicx}
+output: pdf_document
+---
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\indep}{\rotatebox[origin=c]{90}{$\models$}}
+
+# 1. The Dirichlet is a conjugate prior of the multinomial
+
+The Dirichelt distribution and the multinomial distribution are the key distributions for the latent Dirichlet allocation. First we review the key features of the two distributions, and confirm that the Dirichlet distribution is a conjugate prior to the multinomial distribution. 
+
+The multinomial distribution has the following pmf. If
+\begin{align*}
+  X \sim Multinomial(\theta, n)
+\end{align*}
+where $X = (X_1, ...., X_n)$, $\theta = (\theta_1, ...\theta_k)$. Then, 
+
+\begin{align}
+  p(x|\theta, n) = \frac{n!}{\prod_{i=1}^K x_i!} \prod_{i=1}^K \theta_i^{x_i} 
+\end{align}
+where $x = (x_1, ...., x_n)$, and $\sum_{i=1}^K x_i = n$.
+
+The Dirichlet distribution has the following pdf. If 
+\begin{align*}
+\theta \sim Dirichlet (\alpha)
+\end{align*}
+
+Then, 
+
+\begin{align}
+p (\theta|\alpha) = \frac{1}{B(\alpha)} \prod_{i=1}^K \theta_i^{\alpha_i -1}    
+\end{align}
+
+where $\sum_{i=1}^K \theta_i = 1$ and $\theta_i \geq 0, \forall i$. (i.e. $\theta$ belongs to the $K-1$ simplex.)
+
+We can intuitively think how these distributions are related. We can think of the multinomial distribution as a result of $n$ consecutive rolls of a die, where $X = (X_1,...,X_6)$ is the number of each face showing up during the $n$ rolls. Then, the Dirichlet distribution is the distribution over the probability of each face showing up in each roll. (If a die is fair, then $\theta = (1/6, ...1/6)$). 
+
+We can mathmatically show that the Dirichlet distribution is a conjugate prior of the multinomial distribution. The posterior of $\theta$ is
+
+\begin{align*}
+p(\theta|X, \alpha) \propto p(X|\theta, \alpha) p(\theta|\alpha)
+\end{align*}
+
+Then, the RHS is
+
+\begin{align*}
+  &p(X|\theta, \alpha) p(\theta|\alpha) \\
+  &=  \frac{n!}{\prod_{i=1}^K x_i!} \prod_{i=1}^K \theta_i^{x_i} \frac{1}{B(\alpha)} \prod_{i=1}^K \theta_i^{\alpha_i -1} \\
+  &\propto \prod_{i=1}^K  \theta_i^{x_i + \alpha_i -1}
+\end{align*}
+
+This is the kernel of the Dirichlet pdf. So we find that the posterior is also the Dirichlet distribution. By adjusting the constant term, we find that
+
+\begin{align}
+  p(\theta|X) = \frac{1}{B(\alpha + x)} \prod_{i=1}^K  \theta_i^{x_i + \alpha_i -1}
+\end{align}
+
+Therefore, the posterior distribution of $\theta$ is
+
+\begin{align*}
+  \theta^{post} \sim Dirichlet(\alpha + x)
+\end{align*}
+
+# Latent Dirichlet Allocation model
+
+## The original model
+
+We firstly define the key terms used in the model. 
+- Word: an element of a vocabulary. 
+- Vocabulary: a set of $V$ unique words appear in the entire corpus. 
+- Document: a sequence of $N$ words, denoted by $d = (w_1, w_2, ,..w_N)$
+- Corpus: a set of $M$ documents, denoted by $D =(d_1, d_2...d_M)$
+- Topic: a distribution of words. We assume that the number of topics is $K$. 
+
+LDA is the following generating probabilistic model. 
+
+- For each document, $d_j = (w_{j,1}, w_{j,2}, ,..w_{j,N}), j\in[1...M]$,
+  + $\theta_j \sim Dirichlet(\alpha)$
+  + For each word, $w_n, n \in [1...N]$
+    + $z_{j,n} \sim Mutlnimoial(\theta_j)$
+    * $w_{j,n} \sim Multinomial(\phi_{z_{j,n}})$
+
+
+For instance, we have three topics on a news article: sports, politics, and technology ($K = 3$). $\theta_j$, which is the distribution of these topics over the document $d_j$ was drawn from the Dirichlet distribution. We assume that the sampled $\theta_j = [\frac{1}{3}, \frac{1}{4}, \frac{5}{12}]$, where the order of topics are [sports, politics, technology]. Substantively, this means that the document $d_j$ is a mixture of $1/3$ "sports", $1/4$ "poliitcs", and $5/12$ "technology". 
+
+Next, we draw the topic of each word $z_{j,n}$ from $Multinomial(\theta)$. We assume this happens to be "politics." Then, we sample each word $w_{j,n}$ from $Multinomial(\phi_{z{j,n}})$. 
+
+Assuming that the documents and the words are independent, $d_j \indep d_{j'}$ and $w_{j,n} \indep w_{j,n'}$, we can write the joint distribution of $W, Z, \Theta$ given $\alpha, \Phi$ in the following way.
+\begin{align}
+p(W, Z, \Theta|\alpha, \Phi) = \prod_{j=1}^M p(\theta_j|\alpha)\prod_{j=1}^K p(z_{j,n}|\theta_j)p(w_{j,n}|\phi_{z_{j,n}})
+\end{align}
+
+
+## Smoothed LDA
+
+Alternatively, we can assign a prior to $\phi$. This model is called smoothed LDA.
+
+- For each topic, $\phi_i \sim Dirichlet(\beta), i \in [1,...,K]$
+- For each document, $d_j = (w_{j,1}, w_{j,2}, ,..w_{j,N}), j\in[1...M]$,
+  + $\theta_j \sim Dirichlet(\alpha)$
+  + For each word, $w_n, n \in [1...N]$
+    + $z_{j,n} \sim Mutlnimoial(\theta_j)$
+    * $w_{j,n} \sim Multinomial(\phi_{z_{j,n}})$
+
+
+In this model, we can write the joint distribution of $W, Z, \Theta$ given $\alpha, \beta$. 
+\begin{align}
+p(W, Z, \Theta|\alpha, \beta) = \prod_{i=1}^K p(\phi_j|\beta)\prod_{j=1}^M p(\theta_j|\alpha)\prod_{j=1}^K p(z_{j,n}|\theta_j)p(w_{j,n}|\phi_{z_{j,n}})
+\end{align}
+
+
+
+# Variational Inference (original method by Blei et al.)
+
+The original inference method uses variational inference. Variational inference essentially approximate the posterior with a distribution that varies across some parameters, and tune the parameters to minimize the difference between the posterior and the approximate distribution. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

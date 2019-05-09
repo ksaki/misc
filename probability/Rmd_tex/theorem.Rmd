@@ -209,6 +209,46 @@ Because $g(\eta) = \frac{1}{\exp(A\eta))} = -\exp(A(\eta))$, Eq (4) is equivalen
   \E[t(\theta)] = -\frac{\partial}{\partial \eta}log(g(\eta)) =\frac{\partial}{\partial \eta} A(\eta)
 \end{align}
 
+## KL divergence
+
+
+## Mutual Information
+
+The mutual information measures the dependence of two random variables, and defined as follows. 
+
+Let $X$ and $Y$ be two (discrete) random variables, then the mutual information is
+\begin{align}
+  I(X;Y) = D_{KL}(P_{XY}) || P_X \otimes P_Y)  = \sum_y \sum_x P_{XY}(x,y) \log\Big(\frac{P_XY(x,y)}{P_X(x)P_Y(y)} \Big)
+\end{align}
+
+where $D_{KL}$ is KL divergence. Likewise the normalized mutual information (NMI) is 
+\begin{align}
+  \frac{I(X,Y)}{H(X)H(Y)}
+\end{align}
+where $H(\cdot)$ is entropy. 
+
+
+## F1 score
+
+One of the measure to evaluate the performance of classificaiton. F1 score is defined as the harmonic mean of the precision and recall, where
+precision = $P(true positive|true positive + false positive)$ and recall = $P(true positive|true positive + false negative)$.
+Harmonic mean of $x_1...x_n$ is 
+$$
+H = \Big\{\frac{\sum_{i=1}^nx_i^{-1}}{n}\Big\}^{-1}
+$$
+
+Thus, F1 score is
+$$
+F1 = \Big[\frac{recall^{-1} + precision^{-1}}{2} \Big]^{-1}
+$$
+
+
+
+
+
+
+
+
 
 
 

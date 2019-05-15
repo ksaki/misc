@@ -242,8 +242,68 @@ $$
 F1 = \Big[\frac{recall^{-1} + precision^{-1}}{2} \Big]^{-1}
 $$
 
+## The relationship between beta and gamma function
 
+Theorem: 
+$$
+B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}
+$$
+where 
+$$
+\begin{aligned}
+B(\alpha, \beta) = \int_{x=0}^\infty x^{\alpha-1}(1-x)^{\beta-1} dx \\
+\Gamma(\alpha) = \int_{x=0}^\infty e^{-x} x^{\alpha-1} dx
+\end{aligned}
+$$
 
+Proof:
+
+$$
+\begin{aligned}
+\Gamma(\alpha)\Gamma(\beta) 
+&= \int_{x=0}^\infty e^{-x}x^{\alpha-1} dx\int_{y=0}^\infty e^{-y}y^{\beta-1} dy \\
+&= \int_{x=0}^\infty \int_{y=0}^\infty e^{-x}x^{\alpha-1}  e^{-y}y^{\beta-1}\ dy dx \\
+&= \int_{x=0}^\infty \int_{y=0}^\infty e^{-(x+y)}x^{\alpha-1} y^{\beta-1}\ dy dx \\
+\end{aligned}
+$$
+
+Let $x = uw$ and $y = u(1-w)$. Then $u = x+y$ and $w = \frac{x}{x+y}$.
+Because $0 \leq x < \infty$ and $0 \leq x < \infty$. We can rewrite $w$
+$$
+w = \frac{x}{x+y} = (\frac{x+y}{x})^{-1} = (1 + \frac{y}{x})^{-1}
+$$
+Because $0 \leq \frac{y}{x} < \infty$, $0 \leq (1 + \frac{y}{x})^{-1} < 1$. 
+
+By the change of variables,
+$$
+\begin{aligned}
+\Gamma(\alpha)\Gamma(\beta) 
+&= \int_{u=0}^\infty \int_{w = 0}^\infty e^{-u}(uw)^{\alpha-1}(u(1-w))^{\beta-1} |J| \ du dw 
+\end{aligned}
+$$
+
+where $J$ is the determinant of Jaccobian.
+
+$$
+J =
+\begin{bmatrix}
+  w & u \\ 
+  1-w & -u
+\end{bmatrix} 
+= -u
+$$
+Therefore,
+
+$$
+\begin{aligned}
+\Gamma(\alpha)\Gamma(\beta) 
+&= \int_{u=0}^\infty \int_{w = 0}^\infty e^{-u}(uw)^{\alpha-1}(u(1-w))^{\beta-1} |J| \ du dw \\
+&= \int_{u=0}^\infty \int_{w = 0}^\infty e^{-u}(uw)^{\alpha-1}(u(1-w))^{\beta-1} u \ du dw \\
+&=  \int_{u=0}^\infty \int_{w = 0}^\infty e^{-u}u^{\alpha + \beta-1} w^{\alpha-1}(1-w)^{\beta-1}  \ du dw \\
+&=  \int_{u=0}^\infty  e^{-u}u^{\alpha + \beta-1}\ du \int_{w = 0}^\infty w^{\alpha-1}(1-w)^{\beta-1}  \ dw \\
+&= \Gamma(\alpha + \beta)B(\alpha, \beta)
+\end{aligned}
+$$
 
 
 

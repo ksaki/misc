@@ -29,4 +29,7 @@ module load python-anaconda3
 python3 file.py
 ```
 
-
+## Check node availability
+```
+showq -w acct=polisci_flux
+```

@@ -305,9 +305,57 @@ $$
 \end{aligned}
 $$
 
+## The expected value of a random variable with beta distribution 
+
+Theorem: 
+
+Let $X$ be a random varible with a beta distribution.
+$$
+X \sim Beta(\alpha, \beta)
+$$
+Then
+$$
+\E[X] = \frac{\alpha}{\alpha + \beta}
+$$
+
+Proof: 
 
 
+\begin{align}
+  \E[X] &= \int_{x=0}^1 x \frac{1}{B(\alpha, \beta)} x^{\alpha-1}(1-x)^{\beta-1} \ dx \\
+        &= \frac{1}{B(\alpha, \beta)} \int_{x=0}^1 x^\alpha (1-x)^{\beta-1}\ dx \\
+        &= \frac{B(\alpha+1,\beta)}{B(\alpha, \beta)} \label{exp_beta1}
+\end{align}
 
+
+The last line follows because any pdf integrates to 1
+
+\begin{align}
+1 = \int_{x=0}^1 \frac{1}{B(\alpha+1, \beta)}x^\alpha (1-x)^{\beta-1} \ dx \\
+\iff B(\alpha+1, \beta) = \int_{x=0}^1 x^\alpha (1-x)^{\beta-1} \ dx
+\end{align}
+
+
+Using the fact that 
+
+\begin{align}
+B(\alpha, \beta) = \frac{\Gamma(\alpha), \Gamma(\beta)}{\Gamma(\alpha, \beta)}
+\end{align}
+and
+
+\begin{align}
+\Gamma(\alpha+1) = \alpha\Gamma(\alpha)
+\end{align}
+The equation \eqref{exp_beta1} can be simplified 
+
+\begin{align}
+\frac{B(\alpha+1,\beta)}{B(\alpha, \beta)} 
+&= \frac{\Gamma(\alpha+1)\Gamma(\beta)}{\Gamma(\alpha + \beta + 1)}
+\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)} \\
+&= \frac{\alpha\Gamma(\alpha)\Gamma(\beta)}{(\alpha + \beta)\Gamma(\alpha + \beta)}
+\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)} \\
+&= \frac{\alpha}{\alpha + \beta}
+\end{align}
 
 
 

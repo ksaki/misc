@@ -1,3 +1,13 @@
-# references for vimrc
+# vim cheat sheet
 
-https://qiita.com/morikooooo/items/9fd41bcd8d1ce9170301
+## search and replace
+
+- replace x in the selected area with y
+
+```
+
+:'<,'>s/x/y/g  # 'g' for all x in a given line
+
+```
+
+

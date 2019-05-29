@@ -137,7 +137,7 @@ What we are interested in is the posterior distribution of $Z$ (latent variable)
 By the definition of conditional density,
 
 \begin{align}
-p(Z, \Theta|\Phi, \alpha) = \frac{p(W, Z, \Theta|\Phi, \alpha)}{p(W|\Phi, \alpha)} \label{qoi}
+p(Z, \Theta|W, \Phi, \alpha) = \frac{p(W, Z, \Theta|\Phi, \alpha)}{p(W|\Phi, \alpha)} \label{qoi}
 \end{align}
 
 We want to obtain this density. First we start with writing out the joint posterior distribution. 
@@ -312,11 +312,12 @@ where $\Psi(\gamma_{j,k}) \equiv \frac{\partial}{\partial\gamma_{j,k}}\log \Gamm
 
 ## 2.2 Collapsed Gibbs Sampler
 
-We first derive the joint distribution of $W, Z$. 
+The posterior we want to obtain is 
+$$
+p(Z_{i^*j^*} = k^*|Z_{\neg i^*j^*}W, \alpha, \beta) \propto p(W, Z|\alpha, \beta)
+$$
 
-*NOTE: add the explanation why we want this*
-
-By the definition of conditional probability, 
+So, we first derive the joint distribution of $W, Z$. By the definition of conditional probability, 
 \begin{align}
 p(W, Z|\alpha, \beta) = p(Z|\alpha)p(W|Z, \beta) \label{wz}
 \end{align}
@@ -409,6 +410,92 @@ $$
 \end{aligned}
 $$
 where $\delta_{v,k} = \sum_{j=1}^J \sum_{i=1}^N  1\{W_{ij} = v\}1\{Z_{ij} = k\}$, and $\delta_k$ is a vector of length $V$. $\delta_{v,k}$ is the number of unique word $v$ with topic $k$ in the entire corpus. 
+
+Therefore, the joint distribution of $W$ and $Z$ can be expressed as
+\begin{align}
+p(W, Z|\alpha, \beta) = p(Z|\alpha, \beta)p(W|Z, \alpha, \beta) = 
+\Big(\prod_{j=1}^J \frac{B(\alpha + \sigma_j)}{B(\alpha)}  \Big) \Big(\prod_{k=1}^K \frac{B(\beta + \delta_k)}{B(\beta)} \Big)
+\end{align}
+
+Now that we obtained the joint distribuion, let's omit the terms that do not change if we change $Z_{i^*j^*} = k^*$ because what we wanted to have is $p(Z_{i^*j^*} = k^*|Z_{\neg i^*j^*}W, \alpha, \beta)$. [^omit] Let us focus on the prior $p(Z|\alpha, \beta)$ first and then move on to the likelihood $p(W|Z, \alpha, \beta)$. 
+
+[^omit]: Be careful when we drop terms if the variable is discrete. Although the variable itself is $Z$, we want to focus on the case when $Z_{i^*, j^*} = k^*$. So, the terms we are supposed to omit may not contain $Z_{i^*, j^*}$, and instead, it may be written as a function of $k^*$. To see which variable is a function of  $Z_{i^*, j^*} = k^*$ the diagram of data generating process (Figure 2) may be helpful.
+
+
+- Prior
+
+First, we can omit $j' \neq j^*$ because we focus on the document $j^*$. We can also omit the denominator because it only depends on the hyperparameter.
+$$
+\begin{aligned}
+  \prod_{j=1}^J \frac{B(\alpha + \sigma_j)}{B(\alpha)}  \propto \frac{B(\alpha + \sigma_j^*)}{B(\alpha)} \propto B(\alpha + \sigma_j^*)
+\end{aligned}
+$$
+
+Using the relaitonship between beta and gamma function,
+$$
+\begin{aligned}
+   B(\alpha + \sigma_j^*) = \frac{\prod_{k=1}^K \Gamma(\alpha_k + \sigma_{j^*,k})}{\Gamma(\sum_{k=1}^K \alpha_k + \sigma_{j^*,k})}
+\end{aligned}
+$$
+
+From here, we use 'Gamma trick'. First, we isolate $k^*$ from the iteration over $k$
+
+$$
+\begin{aligned}
+\frac{\prod_{k=1}^K \Gamma(\alpha_k + \sigma_{j^*,k})}{\Gamma(\sum_{k=1}^K \alpha_k + \sigma_{j^*,k})} = 
+\frac{ \Gamma(\alpha_{k^*} + \sigma_{j^*,k^*})  \prod_{k\neq k^*}^K \Gamma(\alpha_k + \sigma_{j^*,k})}{\Gamma(\alpha_{k^*} + \sigma_{j^*,k^*} +  \sum_{k \neq k^*}^K (\alpha_k + \sigma_{j^*,k}))}
+\end{aligned}
+$$
+
+Let's define 
+$$
+\begin{aligned}
+\sigma_{j^*k}^\neg = 
+\begin{cases}
+\sigma_{j^*,k} -1, &  if\ k = k^* \\
+\sigma_{j^*,k}, &     else
+\end{cases}
+\end{aligned}
+$$
+
+Replacing $\sigma_{j^*k}$ with $\sigma_{j^*k}^\neg$,
+
+
+$$
+\begin{aligned}
+\frac{ \Gamma(\alpha_{k^*} + \sigma_{j^*,k^*})  \prod_{k\neq k^*}^K \Gamma(\alpha_k + \sigma_{j^*,k})}{\Gamma(\alpha_{k^*} + \sigma_{j^*,k^*} +  \sum_{k \neq k^*}^K (\alpha_k + \sigma_{j^*,k}))} =
+\frac{ \Gamma(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg + 1)  \prod_{k\neq k^*}^K \Gamma(\alpha_k + \sigma_{j^*,k}^\neg)}{\Gamma(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg + 1 +  \sum_{k \neq k^*}^K (\alpha_k + \sigma_{j^*,k}^\neg))}
+\end{aligned}
+$$
+
+Using the fact that $\Gamma(\alpha + 1) = \alpha \Gamma(\alpha)$,
+
+$$
+\begin{aligned}
+\frac{ \Gamma(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg + 1)  \prod_{k\neq k^*}^K \Gamma(\alpha_k + \sigma_{j^*,k}^\neg)}{\Gamma(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg + 1 +  \sum_{k \neq k^*}^K (\alpha_k + \sigma_{j^*,k}^\neg))} 
+&= 
+\frac{(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg ) \Gamma(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg )  \prod_{k\neq k^*}^K \Gamma(\alpha_k + \sigma_{j^*,k}^\neg)}{(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg +  \sum_{k \neq k^*}^K (\alpha_k + \sigma_{j^*,k}^\neg))\Gamma(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg +  \sum_{k \neq k^*}^K (\alpha_k + \sigma_{j^*,k}^\neg))} \\
+&=
+\frac{(\alpha_{k^*} + \sigma_{j^*,k^*}^\neg ) \prod_{k = 1}^K \Gamma(\alpha_k + \sigma_{j^*,k}^\neg)}{(\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k}^\neg))\Gamma(\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k}^\neg))}
+\end{aligned}
+$$
+
+Notice that the terms except $\alpha_{k^*} + \sigma_{j^*,k^*}^\neg$ do not change if we chagne from $Z_{i^*j^*} = k^*$ to $Z_{i^*j^*} = k'$ because they iterate over all $k$ anyways. But, let's keep one term $\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k}^\neg)$ because it makes the interpretation clearer. As a result, we reached the following final expression for the prior
+$$
+\frac{\alpha_{k^*} + \sigma_{j^*,k^*}^\neg}{\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k}^\neg)} = 
+\frac{\alpha_{k^*} + \sigma_{j^*,k^*} -1}{\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k})-1}
+$$
+What does this expression means? Recall that $\sigma_{j^*,k^*}$ is the number of words with the topic $k^*$ in the document $j^*$. So, this expression is essentially the ratio of the words with topic $k^*$ among all the topic assignment $k = 1...K$ in the document $j^*$, adjusted by the hyperparameter $\alpha$, and $-1$ represents the exclusion of the current word we are focusing on $i^*$. Having this expression in the posterior makes sense because if the documents have many words whose topic assignment is $k^*$, then it is more likely that a given word in such a document also have the topic $k^*$.
+
+
+
+
+
+
+
+
+
+
 
 
 

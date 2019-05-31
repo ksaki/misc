@@ -310,25 +310,63 @@ $$
 where $\Psi(\gamma_{j,k}) \equiv \frac{\partial}{\partial\gamma_{j,k}}\log \Gamma(\gamma_{j,k})$.
 
 
-## 2.2 Collapsed Gibbs Sampler
+\newpage 
+
+## 2.2 Collapsed Gibbs Sampler (Griffiths and Steyvers 2004)[^smooth] 
+
+Varitational inference approximates the intractable posterior joint distribution. In contrast, Gibbs sampler requires the posterior distribution of one variable conditional on all the other variables, and iteratively draws samples from the distribution, until the distribution converges to the stationary distribution. In LDA, however, the Gibbs sampler converges very slowly because we have many parameters ($Z$  $\Phi$, $\Theta$ leads to $JN + KV + JK$ parameters!)[^hugeV]. Collapsed Gibbs sampler integrates out some variables $\Phi, \Theta$, so all we need to compute the posterior distribution of $Z_{i^ij^*}$. [^gibbs]  [^collapse]
+
+[^smooth]: In the variational inference section, we assumed the original model, which does not have a prior to $\Phi$. In contrast, this section assumes the smoothed LDA model, which has a prior to $\Phi$. So, the joint posterior distribution we want is $p(Z, \Phi, \Theta|W, \alpha)$. See Figure 2. 
+[^hugeV]: This is huge because $V$ is often huge as this is the number of all unique words that appear in the corpus. 
+[^gibbs]: The convergence of Gibbs sampler requires explaination but I don't understand it yet...  
+[^collapse]: When can we collapse the parameters? 
 
 The posterior we want to obtain is 
-$$
-p(Z_{i^*j^*} = k^*|Z_{\neg i^*j^*}W, \alpha, \beta) \propto p(W, Z|\alpha, \beta)
-$$
-
-So, we first derive the joint distribution of $W, Z$. By the definition of conditional probability, 
 \begin{align}
-p(W, Z|\alpha, \beta) = p(Z|\alpha)p(W|Z, \beta) \label{wz}
+p(Z_{i^*j^*} = k^*|Z_{\neg i^*j^*}W, \alpha, \beta) 
+\end{align}
+
+
+It turns out that this conditional posterior can be expressed as the following form.
+$$
+p(Z_{i^*j^*} = k^*|Z_{\neg i^*j^*}W, \alpha, \beta)  \propto \frac{\alpha_{k^*} + \sigma_{j^*,k^*} -1}{\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k})-1} \times \frac{\beta_v^* + \delta_{v^*,k^*} -1}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*})-1}
+$$
+where 
+
+- $\sigma_{j^*k^*}$ is the number of words whose topic assignment is $k^*$ in the document $j^*$
+- $\delta_{v^*,k^*}$ is the number of words whose word assignment is $v^*$ and topic assignment is $k^*$ in the entire corpus. 
+
+The first term can be interpreted as "how much a given document likes a topic $k^*$ ?" and the second term "how much a unique word in the vocabulary likes the topic $k^*$ ?" [^coursera]
+
+[^coursera]: This interpretation is a quote from [here](https://www.coursera.org/lecture/ml-clustering-and-retrieval/a-worked-example-for-lda-deriving-the-resampling-distribution-O35EG). The following section 2.2.1 also heavily relies on the content from this video. 
+
+### 2.2.1 How does it work?
+
+![A very simple corpus. It has three documents and two topics: company (triangle) and fruits (circle), and only four unique words: google, apple, banana, orange. We want to obtain the posterior of topic assignment of the 'Apple' in the third document. ](colgiblda.pdf)
+
+Let's intuitively think about how to compute the posterior. Assume that we have three documents ($J = 3$), and two topics, company and fruits, and four unique words in the vocabulary, google, apple, banana and orange. How can we compute the posterior of the word 'Apple' in the document 3 has the topic 'company' and 'fruits', respectively? Because $\alpha$ and $\beta$ are hyperparameter, we only need to compute $\sigma_{j^*, k^*}$ and $\delta_{v^*,k^*}$. 
+
+Let's think about the posterior of 'Apple' in the 3rd document having the topic 'company'. We have  $i^* = 1$, $j^* = 3$, $v^* = \text{Apple}$, $k^* = \text{company}$. $\sigma_{j^*\text{company}}$ is the number of words in the document 3 with the topic assignment 'company', so only 'Google', the third word, matches this condition. So, $\sigma_{j^*\text{company}} = 1$. $\delta_{j^*\text{company}}$ is the number of words whose word assignment is 'apple' and the topic assignment is 'company'. We have 3 more apples in the entire copus, but only two apples have topic assignment 'company'. So $\delta_{j^*\text{company}} = 2$. Doing the same thing for fruits topic, we can find $\sigma_{j^*\text{fruits}} = 1$ and $\delta_{j^*\text{fruits}} = 2$. Thus we can find both posterior for topic 'company' and 'fruits'. After obtaining the posterior, we can draw the topic for the apple in the third document with
+
+- $\text{sample(x = c('company', 'fruits'), n = 1, prob = c(posterior for company, posterior for fruits))}$
+
+
+So why can the posterior be expressed in this nice way? The following section shows the sketch of derivation. 
+
+### 2.2.2 Derivation
+
+Because the posterior we are interested in is proportional to the joint distribution of $W, Z$, we first derive the latter and drop terms that do not depend on $Z_{i^*j^*} = k^*$. By the definition of conditional probability, 
+\begin{align}
+p(Z_{i^*j^*} = k^*|Z_{\neg i^*j^*}W, \alpha, \beta)  \propto p(W, Z|\alpha, \beta) = p(Z|\alpha)p(W|Z, \beta) \label{wz}
 \end{align}
 We derive the expression of the each term of the RHS. 
 
-First, we derive $p(Z|\alpha)$. 
+First, we derive $p(Z|\alpha)$. Recovering the form before the integration over $\Theta$,
 
 
 \begin{align}
   p(Z|\alpha) &= \int_\Theta p(Z, \Theta|\alpha)\ d\Theta   \label{zalpha} \\
-              &= \int_\Theta p(\Theta|\alpha) p(Z|\Theta) d\Theta 
+              &= \int_\Theta p(\Theta|\alpha) p(Z|\Theta) d\Theta \label{zalpha_2}
 \end{align}
 
 Recall that 
@@ -342,25 +380,25 @@ Therefore,
 
 \begin{align}
   p(\Theta|\alpha) &= \prod_{j=1}^Jp(\theta_j|\alpha) \\
-                   &= \prod_{j=1}^J \frac{1}{B(\alpha)}\prod_{k=1}^K \theta_{j,k}^{\alpha_k-1}  
+                   &= \prod_{j=1}^J \frac{1}{B(\alpha)}\prod_{k=1}^K \theta_{j,k}^{\alpha_k-1} \label{thetaalpha}
 \end{align}
 
 
 \begin{align}
   p(Z|\Theta) &= \prod_{j=1}^J \prod_{i=1}^N p(Z_{i,j} =k|\theta_j) \\
-              &= \prod_{j=1}^J \prod_{i=1}^N \prod_{k=1}^K \theta_{j,k}^{1\{Z_{i,j} =k\}}   \label{ztheta_1} \\
+              &\propto \prod_{j=1}^J \prod_{i=1}^N \prod_{k=1}^K \theta_{j,k}^{1\{Z_{i,j} =k\}}   \label{ztheta_1} \\
               &= \prod_{j=1}^J \prod_{k=1}^K \theta_{j,k}^{\sum_{i=1}^N 1\{Z_{i,j} =k\}}   \label{ztheta_2} \\
               &= \prod_{j=1}^J \prod_{k=1}^K \theta_{j,k}^{\sigma_{j,k}}   \label{ztheta_3}
 \end{align}
 
-(\ref{ztheta_1}) and (\ref{ztheta_2}) are doing the same thing, but they can be interpreted in different ways. In (\ref{ztheta_1}), we check if $Z_{ij} = k$ for each $k$, and repeat this for all words $i$ in all the documents $j$. In (\ref{ztheta_2}), we counts the number of words with topic $k$ for each $k$ in each document $j$, and repeat this for all $j$. (\ref{ztheta_3}) follows if we define $\sigma_{j,k} \equiv \sum_{i=1}^N 1\{Z_{i,j} =k\}$. This is the number of words with topic $k$ in a document $j$. 
+(\ref{ztheta_3}) follows if we define $\sigma_{j,k} \equiv \sum_{i=1}^N 1\{Z_{i,j} =k\}$. This is the number of words with topic $k$ in a document $j$. In practice, (\ref{ztheta_1}) and (\ref{ztheta_2}) are doing the same thing, but they can be interpreted in different ways. In (\ref{ztheta_1}), we check if $Z_{ij} = k$ for each $k$, and repeat this for all words $i$ in all the documents $j$. In (\ref{ztheta_2}), we counts the number of words with topic $k$ for each $k$ in each document $j$, and repeat this for all $j$. 
 
-Therefore, (\ref{zalpha}) is expressed in the following way. 
+Plugging in (\ref{ztheta_3}) and (\ref{thetaalpha}) to (\ref{zalpha_2}), (\ref{zalpha}) is expressed in the following way. 
 
 
 \begin{align}
   p(Z|\alpha) &= \int_\Theta p(\Theta|\alpha) p(Z|\Theta) d\Theta \\
-              &= \int_{\Theta} \Big( \prod_{j=1}^J \frac{1}{B(\alpha)}\prod_{k=1}^K \theta_{j,k}^{\alpha_k-1} \Big)
+              &\propto \int_{\Theta} \Big( \prod_{j=1}^J \frac{1}{B(\alpha)}\prod_{k=1}^K \theta_{j,k}^{\alpha_k-1} \Big)
               \Big( \prod_{j=1}^J \prod_{k=1}^K \theta_{j,k}^{\sigma_{j,k}}\Big) d\Theta \\
               &= \prod_{j=1}^J \int_{\theta_j} \frac{1}{B(\alpha)}\prod_{k=1}^K \theta_{j,k}^{\alpha_k + \sigma_{j,k}-1} d\theta_j \\
               &= \prod_{j=1}^J\frac{B(\alpha + \sigma_j)}{B(\alpha)} \label{zalpha_last}
@@ -489,12 +527,81 @@ What does this expression means? Recall that $\sigma_{j^*,k^*}$ is the number of
 
 
 
+- Likelihood
+
+Next we drop irrelevant terms in the likelihood in a similar way, but it is more complicated than prior because we have to pay attention both to words and topics! 
+First we can omit $B(\beta)$ because it only depends on the hyperparameter. Then, we can expression the beta function in the numerator with the ratio of gamma functions
+
+$$
+\prod_{k=1}^K \frac{B(\beta + \delta_k)}{B(\beta)} \propto \prod_{k=1}^K \Big(\frac{\prod_{v=1}^V \Gamma(\beta_v + \delta_{v,k})}{\Gamma(\sum_{v=1}^V \beta_v + \delta_{v,k})} \Big)
+$$
+Isolating $k^*$, [^kdrop]
+
+[kdrop]: We could drop terms $k \neq k^*$ but we keep them to use 'Gamma trick' later. 
+
+$$
+ \prod_{k=1}^K \Big(\frac{\prod_{v=1}^V \Gamma(\beta_v + \delta_{v,k})}{\Gamma(\sum_{v=1}^V \beta_v + \delta_{v,k})} \Big) = 
+ \frac{\prod_{v=1}^V \Gamma(\beta_v + \delta_{v,k^*})}{\Gamma(\sum_{v=1}^V \beta_v + \delta_{v,k^*})} \times \prod_{k \neq k^*} \Big(\frac{\prod_{v=1}^V \Gamma(\beta_v + \delta_{v,k})}{\Gamma(\sum_{v=1}^V \beta_v + \delta_{v,k})} \Big)
+$$
+Dropping $v \neq v^*$ in the numerator, and isolating $v^*$ in the denominator, 
+
+$$
+\begin{aligned}
+&\frac{\prod_{v=1}^V \Gamma(\beta_v + \delta_{v,k^*})}{\Gamma(\sum_{v=1}^V \beta_v + \delta_{v,k^*})} \times \prod_{k \neq k^*} \Big(\frac{\prod_{v=1}^V \Gamma(\beta_v + \delta_{v,k})}{\Gamma(\sum_{v=1}^V \beta_v + \delta_{v,k})} \Big) \\ 
+ &=
+ \frac{\Gamma(\beta_v^* + \delta_{v^*,k^*})}{\Gamma(\beta_v^* + \delta_{v^*,k^*} + \sum_{v \neq v^*}(\beta_v + \delta_{v,k^*}))} \times
+ \prod_{k \neq k^*} \Big(\frac{ \Gamma(\beta_v^* + \delta_{v^*,k})}{\Gamma(\beta_v^* + \delta_{v^*,k} + \sum_{v \neq v^*}(\beta_v + \delta_{v,k}))} \Big)
+\end{aligned}
+$$
+
+Define 
+$$
+\begin{aligned}
+\delta_{v,k}^\neg = 
+\begin{cases}
+  \delta_{v,k} -1 & if \ k = k^*\ and\ v = v^* \\
+  \delta_{v,k} & else
+\end{cases}
+\end{aligned}
+$$
+
+Replacing $\delta$ with $\delta^\neg$,
+
+$$
+\frac{\Gamma(\beta_v^* + \delta_{v^*,k^*}^\neg + 1)}{\Gamma(\beta_v^* + \delta_{v^*,k^*}^\neg + 1 + \sum_{v \neq v^*}(\beta_v + \delta_{v,k^*}^\neg))} \times
+ \prod_{k \neq k^*} \Big(\frac{ \Gamma(\beta_v^* + \delta_{v^*,k}^\neg)}{\Gamma(\beta_v^* + \delta_{v^*,k}^\neg + \sum_{v \neq v^*}(\beta_v + \delta_{v,k}^\neg))} \Big)
+$$
+
+Using the 'Gamma trick' to the first term,
+$$
+\frac{(\beta_v^* + \delta_{v^*,k^*}^\neg)\Gamma(\beta_v^* + \delta_{v^*,k^*}^\neg)}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*}^\neg)\Gamma(\sum_{v = 1}^V(\beta_v + \delta_{v,k^*}^\neg))} \times
+ \prod_{k \neq k^*} \Big(\frac{ \Gamma(\beta_v^* + \delta_{v^*,k}^\neg)}{\Gamma(\beta_v^* + \delta_{v^*,k}^\neg + \sum_{v \neq v^*}(\beta_v + \delta_{v,k}^\neg))} \Big)
+$$
+Combining the gamma functions, and dropping the second term,
+$$
+\begin{aligned}
+&\frac{(\beta_v^* + \delta_{v^*,k^*}^\neg)}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*}^\neg)} \times
+ \prod_{k = 1}^K \Big(\frac{ \Gamma(\beta_v^* + \delta_{v^*,k}^\neg)}{\Gamma(\sum_{v = 1}^V(\beta_v + \delta_{v,k}^\neg))} \Big)  \\ 
+ &\propto
+ \frac{(\beta_v^* + \delta_{v^*,k^*}^\neg)}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*}^\neg)}
+\end{aligned}
+$$
+
+Replacing $\delta^\neg$ with $\delta$, 
+$$
+\frac{\beta_v^* + \delta_{v^*,k^*}^\neg}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*}^\neg)} = \frac{\beta_v^* + \delta_{v^*,k^*} -1}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*})-1}
+$$
+The interpretation of this expression is similar to the prior. Recall that $\delta_{v^*, k^*}$ is the number of words whose vocabulary is $v^*$ and the topic is $k^*$ in the corpus.  
 
 
+Finally! Combining the prior and the likelihood, 
+$$
+p(Z_{i^*,j^*} = k^*|Z_{\neg i^*,j^*}, W, \alpha, \beta) \propto \frac{\alpha_{k^*} + \sigma_{j^*,k^*} -1}{\sum_{k =1}^K (\alpha_k + \sigma_{j^*,k})-1} \times \frac{\beta_v^* + \delta_{v^*,k^*} -1}{\sum_{v = 1}^V(\beta_v + \delta_{v,k^*})-1}
+$$
 
+### 2.2.1 Implementation 
 
-
-
+A simple implementation of the collapsed Gibbs sampler is [here.](https://github.com/ksaki/active/blob/master/code/colGibLDA.R)
 
 
 

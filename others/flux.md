@@ -33,3 +33,10 @@ python3 file.py
 ```
 showq -w acct=polisci_flux
 ```
+
+## run R in a batch mode
+
+```
+R CMD BATCH -no-save Rbatch.R Rbatch.out
+```
+

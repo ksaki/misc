@@ -38,3 +38,8 @@ git push origin master
 ```
 git clone <SSH>
 ```
+
+## fetch remotly created branches to the local repository
+```
+git fetch origin <name of the remote new branch>:<name of the copy of the remote new branch>
+```

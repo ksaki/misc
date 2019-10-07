@@ -44,4 +44,3 @@ git clone <SSH>
 git fetch origin <name of the remote new branch>:<name of the copy of the remote new branch>
 ```
 
-test commit 

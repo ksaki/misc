@@ -1,4 +1,4 @@
-# Notes: Basic usage of Git hub
+#Notes: Basic usage of Git hub
 
 ## Update changes 
 
@@ -43,4 +43,4 @@ git clone <SSH>
 ```
 git fetch origin <name of the remote new branch>:<name of the copy of the remote new branch>
 ```
-
+this will create merge conflict

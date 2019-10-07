@@ -58,3 +58,9 @@ You can check the log by
 git log --oneline
 ```
 (Exit from the log by typing "q").
+
+For more information about how to undo changes, see the website by bitbucket below. 
+
+
+# Reference
+[Bit bucket tutorial on github, "Undoing Commits and Changes"](https://www.atlassian.com/git/tutorials/undoing-changes)

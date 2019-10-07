@@ -43,4 +43,18 @@ git clone <SSH>
 ```
 git fetch origin <name of the remote new branch>:<name of the copy of the remote new branch>
 ```
-testing reset hard
+
+## Undo committed changes
+
+The simplest way is to invert the last commit. This will still create a log, but it moves HEAD back to the status before the last commit. 
+
+```
+git commit -m "make some crazy changes"
+git revert HEAD <commit index> 
+```
+
+You can check the log by
+```
+git log --oneline
+```
+(Exit from the log by typing "q").

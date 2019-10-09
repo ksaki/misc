@@ -16,7 +16,16 @@ tmux a -t session_name
 ```
 tmux ls
 ```
+
+- Detach session
+This is what you do when you do not want to eliminate the session
+history but get out of the session temporarilly.
+```
+tmux detach
+```
+
 - Kill sessions
+If you want to eliminate the session completely, use this. 
 ```
 tmux kill-session -t session_name
 ``` 
@@ -39,4 +48,9 @@ Ctrl + b + "
 - Change panes
 ```
 Ctrl + b + arrowkey
+```
+
+- Kill panes
+```
+Ctrl + b + x
 ```

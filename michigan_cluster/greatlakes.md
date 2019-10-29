@@ -61,5 +61,26 @@ squeue -j jobid
 If "ST" seciton is R, it is running. For other signs, see [Slurm website, JOB STATE CODES section 
 (better Ctrl + F because it is at the bottom)](https://slurm.schedmd.com/squeue.html).
 
+## Load modules
+
+To use any software (python, R) we have to load them first. For R, Rtidyverse is recommended because
+it takes long time to install tidyverse. **You have to do the "module load" step every time you login**.
+
+```
+# search module (this search modules that contains "R" in the title.)
+module keyword R
+
+# load module 
+module load Rtidyverse
+
+```
+## R packages
+
+If you chose to use Rtidyverse, you should have R directory at your home (/home/uniqname/R).
+When you want to use other packages that are not in the directory, you have to install the pacakges. 
+(This is only one-time process, unlike "module load", but it can take time if you install large packages.)
+To install packages, you can start R and install.package('package_title') as we always do. 
+
+
 
 

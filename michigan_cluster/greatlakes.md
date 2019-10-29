@@ -10,7 +10,8 @@ From outside UMich network, use VPN or ssh uniqname@scs.itd.umich.edu
 
 ## Slurm
 
-Here is an example slurm job script. It should be named as "XXX.sh"
+In order to submit a batch job, you have to write bash script that has specific structure for
+slurm job scheduler. Here is an example slurm job script. It should be named as "XXX.sh"
 
 ```
 #!/bin/bash
@@ -45,7 +46,7 @@ The important variables are the following
 - --partition: 'standard' is the basic choice. You can request 'gpu' or 'largemem', but different limitations and charges apply.
 - --array: job array (e.g. --array=0-15)
 - --output: the path of the output file. The path in the example will save log files in the home directory.
-
+- --account: lsa will work for polisci students. (I'm still trying to figure out other ways.)
 
 ## Submit jobs and check the process
 

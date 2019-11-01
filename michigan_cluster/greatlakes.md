@@ -6,7 +6,7 @@ From UMich network,
 ```
 ssh uniqname@greatlakes.arc-ts.umich.edu
 ```
-From outside UMich network, use VPN or ssh uniqname@scs.itd.umich.edu
+From outside UMich network, use VPN or `ssh uniqname@scs.itd.umich.edu`
 
 ## Slurm
 
@@ -46,7 +46,17 @@ The important variables are the following
 - --partition: 'standard' is the basic choice. You can request 'gpu' or 'largemem', but different limitations and charges apply.
 - --array: job array (e.g. --array=0-15)
 - --output: the path of the output file. The path in the example will save log files in the home directory.
-- --account: lsa will work for polisci students. (I'm still trying to figure out other ways.)
+- --account: "lsa" or "polisci_dept" will work for polisci students. You can check the acocunts you can use by `my_accounts` commnand.
+
+If you want to run .R file, add the following after the "# The application(s)..." line.
+
+```
+R CMD BATCH --no-save --no-restore your_code.R
+```
+
+`--no-save` does not save datasets at the end of R session, and
+`--no-restore` does not restores `.Rdata` file in the directory where R was started
+
 
 ## Submit jobs and check the process
 
@@ -84,4 +94,9 @@ To install packages, you can start R and install.package('package_title') as we 
 
 
 
+## Reference
 
+- [UMich Great Lakes website](https://arc-ts.umich.edu/greatlakes/)
+- [Slurm user guide](https://arc-ts.umich.edu/greatlakes/slurm-user-guide/)
+- [Slurm workload manager](https://slurm.schedmd.com/)
+- [Turorial on non-interactive R](https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/02-batch-mode.Rmd)

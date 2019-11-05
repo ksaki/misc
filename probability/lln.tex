@@ -1,0 +1,116 @@
+\documentclass[11pt]{article}
+
+% list of packages
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref} 
+\usepackage{graphicx}
+
+% remove indent
+\setlength\parindent{0pt} 
+
+% set margins
+\addtolength{\evensidemargin}{-.5in}
+\addtolength{\oddsidemargin}{-.5in}
+\addtolength{\textwidth}{0.8in}
+\addtolength{\textheight}{0.8in}
+\addtolength{\topmargin}{-.4in}
+
+% define environments specific to problem sets 
+\newtheorem*{question}{Question}
+\newtheorem*{answer}{Answer}
+\newtheorem*{exercise}{Exercise}
+\newtheorem*{challengeproblem}{Challenge Problem}
+
+% define math related environment
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\name}{%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% put your name here, so we know who to give credit to %%
+Saki Kuzushima
+}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hw}{%%%%%%%%%%%%%%%%%%%%
+%% and which homework assignment is it? 
+%% put the correct number below     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+1
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% If you want to define a new command, you can do it like this:
+%%This function is quite useful
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% your document starts here. DO NOT remove \begin{document}!
+\begin{document}
+
+
+\section{Law of Large Numbers}
+
+Law of Large Numbers basically states that, as we increase the sample size, the sample mean converges to the 
+population mean. More precisely,
+ 
+\begin{theorem}[(Weak) Law of Large Numbers]
+Let $X_1 \cdots X_n$ be a sequence of i.i.d. random numbers with $\E[X] = \mu$ and $\V(X) = \sigma^2 < \infty$. 
+Define $\bar{X}_n = \frac{1}{n}\sum X_i$. Then, $\bar{X}_n$ converges in probability to $\mu$. i.e. 
+
+\begin{align}
+  \lim_{n \to \infty} P(\vert X - \mu \vert > \epsilon) = 0
+\end{align}
+\end{theorem}
+
+\begin{proof}
+By Chebychev's inequality. (Explained later)
+\begin{align}
+  P(\vert X - \mu \vert > \epsilon) < \frac{\V(X)}{\epsilon^2} \to 0\quad \text{as} n \to \infty
+\end{align}
+\end{proof}
+
+So what is Chebychev's ineuqality? It is one of the upper bound of the probability. 
+
+\begin{theorem}[Chebychev's inequality]
+Let $X$ be a random variable and $a > 0$. 
+\begin{align}
+  P(\vert X - \E[X] \vert  > a) < \frac{V(X)}{a^2}
+\end{align}
+\end{theorem}
+
+To show this, we need Markov's inequality. This is another important upper bound of the probability. 
+\begin{theorem}[Markov's inequality]
+Let $X > 0$ be a random variable and $a > 0$. Then
+\begin{align}
+  P(X > a) < \frac{E(x)}{a}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+We can show this by playing around the definition of expectation. Assuming that $X$ is continuous random variable, 
+\begin{align}
+  \E(X) &= \int_0^\infty x f_X(x) dx \\
+        &> \int_a^\infty x f_X(x) dx \\
+        &> \int_a^\infty a f_X(x) dx \\
+        &= a \int_a^\infty f_X(x) dx \\
+        &= a P(X \geq a)
+\end{align}
+\end{proof}
+
+
+
+\nocite{*}
+%\cite{casella2002statistical}
+\bibliographystyle{unsrt}%Used BibTeX style is unsrt
+\bibliography{probability}
+%%%% don't delete the last line!
+\end{document}

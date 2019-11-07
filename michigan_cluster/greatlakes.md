@@ -92,6 +92,14 @@ When you want to use other packages that are not in the directory, you have to i
 (This is only one-time process, unlike "module load", but it can take time if you install large packages.)
 To install packages, you can start R and install.package('package_title') as we always do. 
 
+## Useful commands
+```
+# The list of accounts you can use (lsa or polisci_dept)
+my_accounts
+
+# The memory usage of your home directory
+home-quota
+```
 
 
 ## Reference

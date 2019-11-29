@@ -21,3 +21,7 @@ dvipdfmx hoge
 pdflatex hoge.tex
 ```
 
+## Update 2019/11/28.(I might have broken the setting but this works for now)
+```
+ptex2pdf -l hoge.tex
+```

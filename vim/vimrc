@@ -58,7 +58,9 @@ set visualbell
 set noshowmatch
 
 " autocomplete brackets
-inoremap { {}<Left> inoremap [ []<Left> inoremap ( ()<Left>
+inoremap { {}<Left>
+inoremap [ []<Left>
+inoremap ( ()<Left>
 " inoremap " ""<Left> inoremap ' ''<Left>
 
 " always show status line
@@ -127,4 +129,5 @@ let g:airline_theme='fruit_punch'
 
 " when opening vim, format the texts Replace * with .tex if you want to apply
 " this only on .tex file
-autocmd VimEnter *.tex normal gggwG 
+" WARNING: Don't use. This may break the indent structure
+" autocmd VimEnter *.tex normal gggwG 

@@ -1,8 +1,9 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
+set nocompatible              " be iMproved, required 
+filetype off
+" required
 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/Vundle.vim 
 call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
@@ -10,44 +11,41 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
+" The following are examples of different formats supported.  Keep Plugin
+" commands between vundle#begin/end.  plugin on GitHub repo
 
-" test
-Plugin 'scrooloose/nerdtree' 
+" cool status bar
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 
-" R 
-Plugin 'jalvesaq/Nvim-R'
+" vim + tmux 
+Plugin 'christoomey/vim-tmux-navigator'
+
+" R Plugin 'jalvesaq/Nvim-R'
 
 
-" plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'L9'
-" Git plugin not hosted on GitHub
-" Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-" Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-" Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-" Plugin 'ascenator/L9', {'name': 'newL9'}
+" plugin from http://vim-scripts.org/vim/scripts.html Plugin 'L9' Git plugin
+" not hosted on GitHub Plugin 'git://git.wincent.com/command-t.git' git repos
+" on your local machine (i.e. when working on your own plugin) Plugin
+" 'file:///home/gmarik/path/to/plugin' The sparkup vim script is in a
+" subdirectory of this repo called vim.  Pass the path to set the runtimepath
+" properly.  Plugin 'rstacruz/sparkup', {'rtp': 'vim/'} Install L9 and avoid a
+" Naming conflict if you've already installed a different version somewhere
+" else.  Plugin 'ascenator/L9', {'name': 'newL9'}
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
-"filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
+" filetype plugin indent on    " required To ignore plugin indent changes,
+"instead use:
 filetype plugin on
 "
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+" Brief help :PluginList       - lists configured plugins :PluginInstall    -
+" installs plugins; append `!` to update or just :PluginUpdate :PluginSearch
+" foo - searches for foo; append `!` to refresh local cache :PluginClean
+" - confirms removal of unused plugins; append `!` to auto-approve removal
 "
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
+" see :h vundle for more details or wiki for FAQ Put your non-Plugin stuff
+" after this line
 
 
 " show number line
@@ -60,11 +58,8 @@ set visualbell
 set noshowmatch
 
 " autocomplete brackets
-inoremap { {}<Left>
-inoremap [ []<Left>
-inoremap ( ()<Left>
-" inoremap " ""<Left>
-" inoremap ' ''<Left>
+inoremap { {}<Left> inoremap [ []<Left> inoremap ( ()<Left>
+" inoremap " ""<Left> inoremap ' ''<Left>
 
 " always show status line
 set laststatus=2
@@ -72,11 +67,9 @@ set laststatus=2
 " ignore case when searching
 set ignorecase
 
-" indent
-" set smartindent
+" indent set smartindent
 
-" hightlight cursor location
-" set cursorcolumn
+" hightlight cursor location set cursorcolumn
 set cursorline
 
 " spell check
@@ -85,16 +78,17 @@ set spelllang=en
 "2 spaces for a tab"
 set tabstop=2
 set shiftwidth=2
-set expandtab " convert tab to space
+set expandtab 
+" convert tab to space
 
-" disable python recommended style (that force tab to 4 spaces)
-" let g:python_recommended_style = 0
+" disable python recommended style (that force tab to 4 spaces) let
+" g:python_recommended_style = 0
 
 " highlight matching bracket
 set showmatch
 
 " color
-syntax on
+syntax on 
 colorscheme gruvbox
 set bg=dark
 
@@ -103,22 +97,34 @@ set backspace=indent,eol,start
 
 "" NerdTree
 "
-" Automatically open nerdtree
-" autocmd vimenter * NERDTree
-" Close nerdtree if the only window left is nerdtree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" nto for opening nerdtree
-command! Nto NERDTree   "note:  ! to change the existing command
-" ntc for closing nerdtree
-command! Ntc NERDTreeClose
+" Automatically open nerdtree autocmd vimenter * NERDTree Close nerdtree if
+" the only window left is nerdtree autocmd bufenter * if (winnr("$") == 1 &&
+" exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif nto for opening
+" nerdtree command! Nto NERDTree   "note:  ! to change the existing command
+" ntc for closing nerdtree command! Ntc NERDTreeClose
 
 
 "" Nvim -R
 
 
-" my cheat sheet
-" Ctrl + w + w : switch windows within tab (useful for nerdtree)
-" (Terminal feature) Cmd + n : switch to nth tab 
+" my cheat sheet Ctrl + w + w : switch windows within tab (useful for
+" nerdtree) (Terminal feature) Cmd + n : switch to nth tab 
 
+" to keep vim colorscheme in tmux
+set background=dark 
+set t_Co=256
 
+" using the clipboard as the default register for copy and paste
+set clipboard=unnamed
 
+" enable filetype detection
+filetype plugin indent on
+
+set colorcolumn=80
+
+" airlinr (powerline)
+let g:airline_theme='fruit_punch'
+
+" when opening vim, format the texts Replace * with .tex if you want to apply
+" this only on .tex file
+autocmd VimEnter *.tex normal gggwG 

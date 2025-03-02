@@ -27,8 +27,6 @@ Plugin 'VundleVim/Vundle.vim'
 " Install L9 and avoid a Naming conflict if you've already installed a
 " different version somewhere else.
 " Plugin 'ascenator/L9', {'name': 'newL9'}
-"
-"
 
 
 " The following are the plugins I added 
@@ -102,7 +100,8 @@ set laststatus=2
 " ignore case when searching
 set ignorecase
 
-" indent set smartindent
+" indent
+" set smartindent
 
 " hightlight cursor location set cursorcolumn
 set cursorline
@@ -136,14 +135,6 @@ set backspace=indent,eol,start
 "" NerdTree
 let NERDTreeWinSize=20
 
-"
-" Automatically open nerdtree autocmd vimenter * NERDTree Close nerdtree if
-" the only window left is nerdtree autocmd bufenter * if (winnr("$") == 1 &&
-" exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif nto for opening
-" nerdtree command! Nto NERDTree   "note:  ! to change the existing command
-" ntc for closing nerdtree command! Ntc NERDTreeClose
-
-
 "" Nvim -R
 let R_assign = 0
 let R_rconsole_width = 65
@@ -167,10 +158,6 @@ set colorcolumn=80
 " airlinr (powerline)
 let g:airline_theme='fruit_punch'
 
-" when opening vim, format the texts Replace * with .tex if you want to apply
-" this only on .tex file
-" autocmd VimEnter *.tex normal gggwG 
-"
 " cmdlines
 let cmdline_vsplit = 1
 let cmdline_term_width = 80
